@@ -86,6 +86,10 @@ const hexSilencePayload = "f8ff".repeat(320);
 const silenceAudioPayload = Buffer.from(hexSilencePayload, "hex"); // 640-byte payload for silence - 16 bits - 16 kHz - PCM
 // console.log('silenceMsg:', silenceMsg);
 
+//--- Record all audio ? --
+let recordAllAudio = false;
+if (process.env.RECORD_ALL_AUDIO == "true") { recordAllAudio = true };
+
 //==========================================================================
 
 app.ws('/socket', async (ws, req) => {
@@ -107,54 +111,51 @@ app.ws('/socket', async (ws, req) => {
 
   let file;
 
-  try {
-    file = await fsp.writeFile(audioToOAiFileName, '');
-  } catch(e) {
-    console.log("Error creating file", audioToOAiFileName, e);
-  }
-  console.log('File created:', audioToOAiFileName);
+  if (recordAllAudio) {
 
-  try {
-    file = await fsp.writeFile(audioFromVgFileName, '');
-  } catch(e) {
-    console.log("Error creating file", audioFromVgFileName, e);
-  }
-  console.log('File created:', audioFromVgFileName);
+    try {
+      file = await fsp.writeFile(audioToOAiFileName, '');
+    } catch(e) {
+      console.log("Error creating file", audioToOAiFileName, e);
+    }
+    console.log('File created:', audioToOAiFileName);
 
-  try {
-    file = await fsp.writeFile(audioFromOAiFileName, '');
-  } catch(e) {
-    console.log("Error creating file", audioFromOAiFileName, e);
-  }
-  console.log('File created:', audioFromOAiFileName);
+    try {
+      file = await fsp.writeFile(audioFromVgFileName, '');
+    } catch(e) {
+      console.log("Error creating file", audioFromVgFileName, e);
+    }
+    console.log('File created:', audioFromVgFileName);
 
-  try {
-    file = await fsp.writeFile(audioToVg1FileName, '');
-  } catch(e) {
-    console.log("Error creating file", audioToVg1FileName, e);
-  }
-  console.log('File created:', audioToVg1FileName);
+    try {
+      file = await fsp.writeFile(audioFromOAiFileName, '');
+    } catch(e) {
+      console.log("Error creating file", audioFromOAiFileName, e);
+    }
+    console.log('File created:', audioFromOAiFileName);
 
-  try {
-    file = await fsp.writeFile(audioToVg2FileName, '');
-  } catch(e) {
-    console.log("Error creating file", audioToVg2FileName, e);
-  }
-  console.log('File created:', audioToVg2FileName);
+    try {
+      file = await fsp.writeFile(audioToVg1FileName, '');
+    } catch(e) {
+      console.log("Error creating file", audioToVg1FileName, e);
+    }
+    console.log('File created:', audioToVg1FileName);
 
-  //-- how to write audio payload into file --
-  //   try {
-  //     fsp.appendFile(filename, msg, 'binary');
-  //   } catch(e) {
-  //     console.log("error writing to file", filename, e);
-  //   }
+    try {
+      file = await fsp.writeFile(audioToVg2FileName, '');
+    } catch(e) {
+      console.log("Error creating file", audioToVg2FileName, e);
+    }
+    console.log('File created:', audioToVg2FileName);
 
-  //--
+  }  
+
+  //-- stream audio to VG --
 
   let oAIPayload = Buffer.alloc(0);
   let streamToVgIndex = 0;
 
-  //-- stream audio to VG --
+  //-
 
   const streamTimer = setInterval ( () => {
 
@@ -167,11 +168,13 @@ app.ws('/socket', async (ws, req) => {
         if (wsVgOpen && streamToVgPacket.length == 640) {
             ws.send(streamToVgPacket);
 
-            try {
-              fsp.appendFile(audioToVg2FileName, streamToVgPacket, 'binary');
-            } catch(e) {
-              console.log("error writing to file", audioToVg2FileName, e);
-            }
+            if (recordAllAudio) {
+              try {
+                fsp.appendFile(audioToVg2FileName, streamToVgPacket, 'binary');
+              } catch(e) {
+                console.log("error writing to file", audioToVg2FileName, e);
+              }
+            }  
 
         };
       } else {
@@ -237,11 +240,12 @@ app.ws('/socket', async (ws, req) => {
           const payloadInFromOAi = Buffer.from(response.delta, 'base64');
           // console.log('>>> Raw audio payload from OpenAI', Date.now(), 'length', payloadInFromOAi.length);
   
-          //-- write payload into audio file --    
-          try {
-            fsp.appendFile(audioFromOAiFileName, payloadInFromOAi, 'binary');
-          } catch(e) {
-            console.log("error writing to file", audioFromOAiFileName, e);
+          if (recordAllAudio) {
+            try {
+              fsp.appendFile(audioFromOAiFileName, payloadInFromOAi, 'binary');
+            } catch(e) {
+              console.log("error writing to file", audioFromOAiFileName, e);
+            }
           }      
 
           //-- simple resampler --    
@@ -252,11 +256,13 @@ app.ws('/socket', async (ws, req) => {
           const payloadToVg = await reSampleL16Audio(payloadInFromOAi, 24000, 16000);
           // console.log('>>>', Date.now(), 'Audio to Vonage payload length:', payloadToVg.length);
 
-          try {
-            fsp.appendFile(audioToVg1FileName, payloadToVg, 'binary');
-          } catch(e) {
-            console.log("error writing to file", audioToVg1FileName, e);
-          }
+          if (recordAllAudio) {
+            try {
+              fsp.appendFile(audioToVg1FileName, payloadToVg, 'binary');
+            } catch(e) {
+              console.log("error writing to file", audioToVg1FileName, e);
+            }
+          }  
 
           if(wsVgOpen) {
             oAIPayload = Buffer.concat([oAIPayload, payloadToVg]);
@@ -294,7 +300,7 @@ app.ws('/socket', async (ws, req) => {
 
   wsOAI.on('close', async () => {
 
-    wsOAIOpen = false; // stop sending audio payload to DG platform
+    wsOAIOpen = false; // stop sending audio payload to OAI platform
     
     console.log("OpenAI WebSocket closed");
   });
@@ -309,13 +315,13 @@ app.ws('/socket', async (ws, req) => {
     
     } else {
 
-
-      //-- write audio palyload to file -- 
-      try {
-        fsp.appendFile(audioFromVgFileName, msg, 'binary');
-      } catch(e) {
-        console.log("error writing to file", audioFromVgFileName, e);
-      }
+      if (recordAllAudio) {
+        try {
+          fsp.appendFile(audioFromVgFileName, msg, 'binary');
+        } catch(e) {
+          console.log("error writing to file", audioFromVgFileName, e);
+        }
+      }  
 
       //---  
 
@@ -327,12 +333,13 @@ app.ws('/socket', async (ws, req) => {
         //-- advanced resampler --
         const processedAudio = await reSampleL16Audio(msg, 16000, 24000);
 
-        //-- write audio palyload to file -- 
-        try {
-          fsp.appendFile(audioToOAiFileName, processedAudio, 'binary');
-        } catch(e) {
-          console.log("error writing to file", audioToOAiFileName, e);
-        }
+        if (recordAllAudio) {
+          try {
+            fsp.appendFile(audioToOAiFileName, processedAudio, 'binary');
+          } catch(e) {
+            console.log("error writing to file", audioToOAiFileName, e);
+          }
+        }  
 
         // console.log('>>>', Date.now(), 'Audio to OpenAI payload length:', processedAudio.length);
 
