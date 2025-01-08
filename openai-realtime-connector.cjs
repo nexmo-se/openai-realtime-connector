@@ -74,15 +74,13 @@ const openAiSessionSettings = {
   }
 };
 
-//--- Linear 16 raw audio sampling frequency resampler ---
+//--- Linear 16-bit raw audio sampling frequency resamplers ---
+const l16AudioDownsampler = require('./l16audio-downsampler.cjs');
+const l16AudioUpsampler = require('./l16audio-upsampler.cjs');
 
-const reSampleL16Audio = require('./resamplel16audio.cjs');
-
-//--- Audio silence payload for linear 16, 16 kHz, mono ---
-
+//--- Audio silence payload for linear 16-bit, 16 kHz, mono ---
 const hexSilencePayload = "f8ff".repeat(320);
 // console.log('hexSilencePayload:', hexSilencePayload);
-
 const silenceAudioPayload = Buffer.from(hexSilencePayload, "hex"); // 640-byte payload for silence - 16 bits - 16 kHz - PCM
 // console.log('silenceMsg:', silenceMsg);
 
@@ -247,13 +245,9 @@ app.ws('/socket', async (ws, req) => {
               console.log("error writing to file", audioFromOAiFileName, e);
             }
           }      
-
-          //-- simple resampler --    
-          // const payloadToVg = reSampleL16Audio(payloadInFromOAi, 24000, 16000);
-          // console.log('>>> Resampled raw audio payload from OpenAI', Date.now(), 'length', payloadToVg.length);
-      
-          //-- advanced resampler --
-          const payloadToVg = await reSampleL16Audio(payloadInFromOAi, 24000, 16000);
+     
+          //-- downsampling  --
+          const payloadToVg = await l16AudioDownsampler(payloadInFromOAi, 24000, 16000);
           // console.log('>>>', Date.now(), 'Audio to Vonage payload length:', payloadToVg.length);
 
           if (recordAllAudio) {
@@ -327,11 +321,8 @@ app.ws('/socket', async (ws, req) => {
 
       if(wsOAIOpen) {
 
-        //-- simple resampler --
-        // const processedAudio = reSampleL16Audio(msg, 16000, 24000);
-
-        //-- advanced resampler --
-        const processedAudio = await reSampleL16Audio(msg, 16000, 24000);
+        //-- upsampling --
+        const processedAudio = await l16AudioUpsampler(msg, 16000, 24000);
 
         if (recordAllAudio) {
           try {
@@ -383,8 +374,7 @@ app.get('/_/health', async(req, res) => {
 
 //=====================================================================
 
-const port = process.env.PORT || 6000;
-
+const port = process.env.NERU_APP_PORT || process.env.PORT || 6000;
 app.listen(port, () => console.log(`OpenAI Connector server application listening on local port ${port}.`));
 
 //------------
