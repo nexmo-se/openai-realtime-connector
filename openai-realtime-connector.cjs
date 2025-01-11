@@ -90,6 +90,35 @@ if (process.env.RECORD_ALL_AUDIO == "true") { recordAllAudio = true };
 
 //==========================================================================
 
+//--- Streaming timer calculation ---
+
+let prevTime = Date.now();
+let counter = 0;
+let total = 0;
+let cycles = 500; // ~ 9 to 10 seconds measurement time
+// let timer = 19; // in ms
+let timer = 18; // in ms
+
+console.log('\n>>> Wait around', Math.round(cycles * timer / 1000), 'seconds to see the actual streaming timer average ...\n');
+
+const streamTimer = setInterval ( () => {
+    
+    const timeNow = Date.now();
+    const difference = timeNow - prevTime;
+    total = total + difference;
+    prevTime = timeNow;
+
+    counter++;
+
+    if (counter == cycles) { 
+        clearInterval(streamTimer);
+        console.log('\n>>> Average streaming timer:', total / counter);
+    };
+
+}, timer);
+
+//--------------------------------------------------------------------------
+
 app.ws('/socket', async (ws, req) => {
 
   let wsOAIOpen = false; // WebSocket to OpenAI ready for binary audio payload?
@@ -176,13 +205,24 @@ app.ws('/socket', async (ws, req) => {
 
         };
       } else {
-        streamToVgIndex = streamToVgIndex - 640; // prevent index from increasing for ever as it is beyond buffer current length
-        ws.send(silenceAudioPayload);
+
+        streamToVgIndex = streamToVgIndex - 640; // prevent index from increasing for ever as it is beyond buffer current length    
+        
+        if (wsVgOpen) { 
+          ws.send(silenceAudioPayload);
+        };
+
       }
 
-    }  
+    } else {
 
-  }, 20);
+      if (wsVgOpen) { 
+        ws.send(silenceAudioPayload);
+      };
+    
+    } 
+
+  }, timer);
 
   //--
 
@@ -282,9 +322,8 @@ app.ws('/socket', async (ws, req) => {
 
       default:
 
-        console.log('>>>', Date.now(), response);
-      
-        // console.log('>>> response.type:', response.type);  
+        // console.log('>>>', Date.now(), response);
+        console.log('>>> response.type:', response.type);  
 
     }
 
