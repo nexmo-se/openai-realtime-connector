@@ -96,7 +96,6 @@ let prevTime = Date.now();
 let counter = 0;
 let total = 0;
 let cycles = 500; // ~ 9 to 10 seconds measurement time
-// let timer = 19; // in ms
 let timer = 18; // in ms
 
 console.log('\n>>> Wait around', Math.round(cycles * timer / 1000), 'seconds to see the actual streaming timer average ...\n');
@@ -208,17 +207,17 @@ app.ws('/socket', async (ws, req) => {
 
         streamToVgIndex = streamToVgIndex - 640; // prevent index from increasing for ever as it is beyond buffer current length    
         
-        if (wsVgOpen) { 
-          ws.send(silenceAudioPayload);
-        };
+        // if (wsVgOpen) { 
+        //   ws.send(silenceAudioPayload);
+        // };
 
       }
 
     } else {
 
-      if (wsVgOpen) { 
-        ws.send(silenceAudioPayload);
-      };
+      // if (wsVgOpen) { 
+      //   ws.send(silenceAudioPayload);
+      // };
     
     } 
 
