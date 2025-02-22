@@ -1,7 +1,7 @@
 {
-  "name": "openai-connector",
+  "name": "openai-realtime-connector",
   "version": "1.0.0",
-  "description": "Vonage - OpenAI Realtime API Connector",
+  "description": "Vonage - OpenAI Speech-to-Speech Realtime API Connector",
   "main": "openai-realtime-connector.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
