@@ -78,12 +78,6 @@ const openAiSessionSettings = {
 const l16AudioDownsampler = require('./l16audio-downsampler.cjs');
 const l16AudioUpsampler = require('./l16audio-upsampler.cjs');
 
-//--- Audio silence payload for linear 16-bit, 16 kHz, mono ---
-const hexSilencePayload = "f8ff".repeat(320);
-// console.log('hexSilencePayload:', hexSilencePayload);
-const silenceAudioPayload = Buffer.from(hexSilencePayload, "hex"); // 640-byte payload for silence - 16 bits - 16 kHz - PCM
-// console.log('silenceMsg:', silenceMsg);
-
 //--- Record all audio ? --
 let recordAllAudio = false;
 if (process.env.RECORD_ALL_AUDIO == "true") { recordAllAudio = true };
@@ -112,7 +106,7 @@ const streamTimer = setInterval ( () => {
 
     if (counter == cycles) { 
         clearInterval(streamTimer);
-        console.log('\n>>> Average streaming timer (should be under 20.000):', total / counter);
+        console.log('\n>>> Average streaming timer (should be close to 20 and under 20.000):', total / counter);
     };
 
 }, timer);
@@ -207,20 +201,10 @@ app.ws('/socket', async (ws, req) => {
       } else {
 
         streamToVgIndex = streamToVgIndex - 640; // prevent index from increasing for ever as it is beyond buffer current length    
-        
-        // if (wsVgOpen) { 
-        //   ws.send(silenceAudioPayload);
-        // };
 
       }
 
-    } else {
-
-      // if (wsVgOpen) { 
-      //   ws.send(silenceAudioPayload);
-      // };
-    
-    } 
+    }
 
   }, timer);
 
