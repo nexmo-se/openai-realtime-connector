@@ -33,7 +33,7 @@ const openAiApiKey = process.env.OPENAI_API_KEY;
 const openAiEndpoint = process.env.OPENAI_ENDPOINT;
 const openAiModel = process.env.OPENAI_MODEL;
 const openAiVoiceName = process.env.OPENAI_VOICE_NAME;
-const openAiSystemMessage = process.env.OPENAI_SYTEM_MESSAGE;
+const openAiSystemMessage = process.env.OPENAI_SYSTEM_MESSAGE;
 const openAiInputAudioTranscription = process.env.OPENAI_INPUT_AUDIO_TRANSCRIPTION;
 const openAiTurnDetectionType = process.env.OPENAI_TURN_DETECTION_TYPE;
 
@@ -96,6 +96,7 @@ let prevTime = Date.now();
 let counter = 0;
 let total = 0;
 let cycles = 500; // ~ 9 to 10 seconds measurement time
+// let timer = 19; // in ms
 let timer = 18; // in ms
 
 console.log('\n>>> Wait around', Math.round(cycles * timer / 1000), 'seconds to see the actual streaming timer average ...\n');
@@ -111,7 +112,7 @@ const streamTimer = setInterval ( () => {
 
     if (counter == cycles) { 
         clearInterval(streamTimer);
-        console.log('\n>>> Average streaming timer:', total / counter);
+        console.log('\n>>> Average streaming timer (should be under 20.000):', total / counter);
     };
 
 }, timer);
@@ -254,6 +255,8 @@ app.ws('/socket', async (ws, req) => {
   wsOAI.on('message', async(msg, isBinary) =>  {
 
     const response = JSON.parse(msg);
+
+    console.log("\n", response);
 
     switch(response.type) {
 
