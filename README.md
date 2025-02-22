@@ -47,13 +47,13 @@ cp .env.example .env
 
 Update the argument of the parameter **`OPENAI_API_KEY`** in .env file<br>
 
-Update the arguments of the following parameters as needed per your use case:
+Update the arguments of the following parameters as needed per your use case:</br>
 **`OPENAI_MODEL`**</br>
 **`OPENAI_VOICE_NAME`**</br>
 **`OPENAI_SYSTEM_MESSAGE`**</br>
 **`OPENAI_INPUT_AUDIO_TRANSCRIPTION`**.</br>
 
-Do not change the arguments of parameters:
+Do not change the arguments of parameters:</br>
 **`OPENAI_ENDPOINT`**</br>
 **`OPENAI_TURN_DETECTION_TYPE`** (used for barge-in, i.e. it stops playing the response when participant resumes speaking).
 
