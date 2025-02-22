@@ -37,25 +37,25 @@ Start ngrok to start both tunnels that forward to local ports 6000 and 8000,</br
 please take note of the ngrok **Enpoint URL** that forwards to local port 6000 as it will be needed when setting the [Voice API application](https://github.com/nexmo-se/voice-to-ai-engines),
 that URL looks like:</br>
 `xxxxxxxx.ngrok.io` (for ngrok), `myserver.mycompany.com:32000`  (as **`PROCESSOR_SERVER`** in the .env file of the [Voice API application](https://github.com/nexmo-se/voice-to-ai-engines)),</br>
-no `port` is necessary with ngrok or heroku as public hostname,</br>
+no `port` is necessary with ngrok as public host name,</br>
 that host name to specify must not have leading protocol text such as https://, wss://, nor trailing /.
 
 Copy the `.env.example` file over to a new file called `.env`:
 ```bash
-cp .env.example .env
+cp .env.example .env 
 ```
 
 Update the argument of the parameter **`OPENAI_API_KEY`** in .env file<br>
 
 Update the arguments of the following parameters as needed per your use case:
-**`OPENAI_MODEL`**
-**`OPENAI_VOICE_NAME`**
-**`OPENAI_SYSTEM_MESSAGE`**
-**`OPENAI_INPUT_AUDIO_TRANSCRIPTION`**
+**`OPENAI_MODEL`**</br>
+**`OPENAI_VOICE_NAME`**</br>
+**`OPENAI_SYSTEM_MESSAGE`**</br>
+**`OPENAI_INPUT_AUDIO_TRANSCRIPTION`**.</br>
 
 Do not change the arguments of parameters:
-**`OPENAI_ENDPOINT`**
-**`OPENAI_TURN_DETECTION_TYPE`** (used for barge-in, i.e. it stops playing the reponse when participant resumes speaking).
+**`OPENAI_ENDPOINT`**</br>
+**`OPENAI_TURN_DETECTION_TYPE`** (used for barge-in, i.e. it stops playing the response when participant resumes speaking).
 
 #### Node.js - This Connector application
 
@@ -71,13 +71,13 @@ Launch the application:<br>
 node openai-realtime-connector.cjs
 ```
 
-Default local (not public!) of this application server `port` is: 8000.
+Default local (not public!) of this Connector server application server `port` is: 6000.
 
 #### Voice API application
 
 Set up the samplle peer Voice API application per the instructions in its [repository](https://https://github.com/nexmo-se/voice-to-ai-engines).
 
-Call in to phone number as set up in that application to interact with the OpenAI Speech-to-Speech engine.
+Call in to the phone number as set up in that application to interact with the OpenAI's Speech-to-Speech engine.
 
 ### Cloud deployment
 
