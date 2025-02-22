@@ -6,6 +6,8 @@ Voice calls may be from/to PSTN (cell phones, landline phones, fixed phones),  W
 
 ## About this Connector code
 
+See the diagram in this repository for an overview of the solution architecture.
+
 This connector makes use of the [WebSockets feature](https://developer.vonage.com/en/voice/voice-api/concepts/websockets) of Vonage Voice API.</br>
 When a voice call is established, the peer Voice API application triggers a WebSocket connection to this Connector application then streams audio in both directions between the voice call and OpenAI engine in real time. 
 
