@@ -11,7 +11,7 @@ See the diagram in this repository for an overview of the solution architecture.
 This connector makes use of the [WebSockets feature](https://developer.vonage.com/en/voice/voice-api/concepts/websockets) of Vonage Voice API.</br>
 When a voice call is established, the peer Voice API application triggers a WebSocket connection to this Connector application then streams audio in both directions between the voice call and OpenAI engine in real time. 
 
-You may deploy this [sample Voice API application]https://github.com/nexmo-se/voice-to-ai-engines to use this Connector code to bi-directionally stream audio between voice calls and OpenAI Speech-to-Speech engine running an LLM.
+You may deploy this [sample Voice API application](https://github.com/nexmo-se/voice-to-ai-engines) to use this Connector code to bi-directionally stream audio between voice calls and OpenAI Speech-to-Speech engine running an LLM.
 
 ## Set up
 
