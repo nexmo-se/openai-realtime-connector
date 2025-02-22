@@ -11,7 +11,7 @@ See the diagram in this repository for an overview of the solution architecture.
 This connector makes use of the [WebSockets feature](https://developer.vonage.com/en/voice/voice-api/concepts/websockets) of Vonage Voice API.</br>
 When a voice call is established, the peer Voice API application triggers a WebSocket connection to this Connector application then streams audio in both directions between the voice call and OpenAI engine in real time. 
 
-You may deploy this [sample Voice API application](https://github.com/nexmo-se/voice-to-ai-engines) to use this Connector code to bi-directionally stream audio between voice calls and OpenAI Speech-to-Speech engine running an LLM.
+You may deploy this [sample Voice API application](https://github.com/nexmo-se/voice-to-ai-engines) to use this Connector code to bi-directionally stream audio between voice calls and OpenAI's Speech-to-Speech engine running an LLM.
 
 ## Set up
 
@@ -36,7 +36,7 @@ Set up two domains, one to forward to the local port 6000 (as this Connector app
 Start ngrok to start both tunnels that forward to local ports 6000 and 8000,</br>
 please take note of the ngrok **Enpoint URL** that forwards to local port 6000 as it will be needed when setting the [Voice API application](https://github.com/nexmo-se/voice-to-ai-engines),
 that URL looks like:</br>
-`xxxxxxxx.ngrok.io` (for ngrok), `xxxxxxxx.herokuapp.com`, `myserver.mycompany.com:32000`  (as **`PROCESSOR_SERVER`** in the .env file of the [Voice API application](https://github.com/nexmo-se/voice-to-ai-engines)),</br>
+`xxxxxxxx.ngrok.io` (for ngrok), `myserver.mycompany.com:32000`  (as **`PROCESSOR_SERVER`** in the .env file of the [Voice API application](https://github.com/nexmo-se/voice-to-ai-engines)),</br>
 no `port` is necessary with ngrok or heroku as public hostname,</br>
 that host name to specify must not have leading protocol text such as https://, wss://, nor trailing /.
 
