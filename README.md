@@ -75,7 +75,7 @@ Default local (not public!) of this Connector server application server `port` i
 
 #### Voice API application
 
-Set up the samplle peer Voice API application per the instructions in its [repository](https://https://github.com/nexmo-se/voice-to-ai-engines).
+Set up the samplle peer Voice API application per the instructions in its [repository](https://github.com/nexmo-se/voice-to-ai-engines).
 
 Call in to the phone number as set up in that application to interact with the OpenAI's Speech-to-Speech engine.
 
